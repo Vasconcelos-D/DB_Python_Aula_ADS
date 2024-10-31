@@ -1,31 +1,19 @@
-#Criando o script (PESSOA)
-import sqlite3 as conector
-#importando o connector
+import sqlite3 as conector #Importando a biblioteca sqlite3 com o apelido conector
+from modelo import Veiculo #Importando modelo da classe Veiculo
 
-try:
-#Abrindo o bloco Try, exececão
-    #Abertuta da conexão e  aquisição de cursor
-    conexao = conector.connect('./meu_banco.db')
-    cursor = conexao.cursor()
+#Abrindo a conexão 
+conexao = conector.connect("./meu_banco.db") #Conectando com Banco de Dados
+cursor = conexao.cursor() #Criando o cursor
 
-    #Execução de um comando SELECT_CREATE
-    comando = '''CREATE TABLE Pessoa (
-                    cpf INTEGER NOT NULL,
-                    nome TEXT NOT NULL,
-                    nascimento DATE NOT NULL,
-                    oculos BOOLEAN NOT NULL,
-                    PRIMARY KEY (cpf)
-                    );'''
-    cursor.execute(comando)
+comando = '''SELECT * FROM Veiculo;''' #Comondo do Banco de Dados
+cursor.execute(comando) #Execução do comando
 
-    #Efetivação do comando
-    conexao.commit()
+reg_veiculos = cursor.fetchall()
 
-except conector.DatabaseError as err:
-    #atribuindo a exceção
-    print("Error de Banco de Dados", err)
-finally:
-    #fechando a conexão
-    if conexao:
-        cursor.close()
-        conexao.close()
+for reg_veiculo in reg_veiculos:
+    veiculo = Veiculo(*reg_veiculo)
+    print("Placa: ", veiculo.placa, ", Marca: ", veiculo.marca)
+    
+cursor.close()
+conexao.close()
+

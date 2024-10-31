@@ -1,20 +1,24 @@
-#Criando Script (VEICULO)
-import sqlite3 as conector
-#importando conector
+from modelo import Veiculo, Marca  # Importando modelo da classe Veiculo
 
-#Abertura de conexcão e aquisição de cursor
-conexao = conector.connect("./meu_banco.db")
-cursor = conexao.cursor()
+# Abrindo a conexão 
+def recuperar_veiculos(conexao, cpf):
 
-#Executando Comando:
-comando = '''ALTER TABLE Veiculo
-                ADD motor REAL
-                ;'''
-cursor.execute(comando)
+    cursor = conexao.cursor()  # Criando o cursor
 
-#Efetivando o comando
-conexao.commit()
+    comando = '''SELECT * FROM Veiculo 
+                 JOIN Marca ON Marca.id = Veiculo.marca
+                 WHERE Veiculo.proprietario = ?;'''  # Comando do Banco de Dados
+    cursor.execute(comando, (cpf,))  # Execução do comando
+   
 
-#Fechando as conexões
-cursor.close()
-conexao.close()
+    veiculos = []
+    registros = cursor.fetchall()
+   
+    
+    for registro in registros:  
+        marca = Marca(*registro[6:])  # Cria uma instância de Marca com os dados apropriados
+        veiculo = Veiculo(*registro[:5], marca)  # Cria uma instância de Veiculo, associando a Marca
+        veiculos.append(veiculo)  # Adiciona o Veiculo à lista
+
+    cursor.close()
+    return veiculos

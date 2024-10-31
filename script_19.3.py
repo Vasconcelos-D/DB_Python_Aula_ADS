@@ -1,26 +1,22 @@
-#Criando Script (VEICULO)
-import sqlite3 as conector
-#importando conector
+import sqlite3 as conector #Importando a biblioteca sqlite3 com o apelido conector
+from modelo import Veiculo, Marca #Importando modelo da classe Veiculo
 
-#Abertura de conexcão e aquisição de cursor
-conexao = conector.connect("./meu_banco.db")
-cursor = conexao.cursor()
+#Abrindo a conexão 
+conexao = conector.connect("./meu_banco.db") #Conectando com Banco de Dados
+cursor = conexao.cursor() #Criando o cursor
 
-#Executando Comando:
-comando = '''CREATE TABLE Veiculo (
-                placa CHARACTER(7) NOT NULL,
-                ano INTEGER NOT NULL,
-                cor TEXT NOT NULL,
-                proprietario INTEGER NOT NULL,
-                marca INTEGER NOT NULL,
-                PRIMARY KEY (placa),
-                FOREIGN KEY(marca) REFERENCES Marca(id)
-                );'''
-cursor.execute(comando)
+comando = '''SELECT * FROM 
+                Veiculo JOIN Marca ON Marca.id = Veiculo.marca;''' #Comondo do Banco de Dados
+cursor.execute(comando) #Execução do comando
 
-#Efetivando o comando
-conexao.commit()
+registros = cursor.fetchall()
 
-#Fechando as conexões
+for registro in registros:
+    print(registro)
+    marca = Marca(*registro[6:])
+    veiculo = Veiculo(*registro[:5], marca)
+    print("Placa:", veiculo.placa, ", Marca:", veiculo.marca.nome)
+    
 cursor.close()
 conexao.close()
+
