@@ -5,9 +5,9 @@ def recuperar_veiculos(conexao, cpf):
 
     cursor = conexao.cursor()  # Criando o cursor
 
-    comando = '''SELECT * FROM Veiculo 
-                 JOIN Marca ON Marca.id = Veiculo.marca
-                 WHERE Veiculo.proprietario = ?;'''  # Comando do Banco de Dados
+    comando = '''SELECT * FROM Veiculo v
+                 JOIN Marca m ON m.id = v.marca 
+                 WHERE v.proprietario = ?;'''  # Comando do Banco de Dados
     cursor.execute(comando, (cpf,))  # Execução do comando
    
 
